@@ -26,7 +26,7 @@ app.use((request, response, next) => {
 app.use(cookieParser()); // Middleware
 
 const corsOptions = {
-    origin: process.env.CLIENT_ENDPOINT,
+    origin: process.env.production.CLIENT_ENDPOINT,
     credentials: true
 };
 app.use(cors(corsOptions));
