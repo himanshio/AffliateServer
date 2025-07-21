@@ -1,5 +1,5 @@
 require('dotenv').config();
-const express = require('express'); // Express module included
+const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -13,36 +13,35 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Database connected'))
     .catch(error => console.log(error));
 
-const app = express(); // Instance of express application
+const app = express();
 
-// We want to skip applying json middleware to webhook endpoint
+// JSON middleware, skip for webhook
 app.use((request, response, next) => {
     if (request.originalUrl.startsWith('/payments/webhook')) {
         return next();
     }
-
     express.json()(request, response, next);
 });
-app.use(cookieParser()); // Middleware
 
-const cors = require('cors');
+app.use(cookieParser());
 
+// CORS configuration
 const allowedOrigins = [
-  'http://localhost:3000',
-  'https://bright-starship-485f48.netlify.app'
+    'http://localhost:3000',
+    'https://bright-starship-485f48.netlify.app'
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
     }
-  }
 }));
 
-
+// Routes
 app.use('/auth', authRoutes);
 app.use('/links', linksRoutes);
 app.use('/users', userRoutes);
@@ -53,6 +52,6 @@ app.listen(PORT, (error) => {
     if (error) {
         console.log('Server not started: ', error);
     } else {
-        console.log(`Server is running on http://localhost:${PORT}`)
+        console.log(`Server is running on http://localhost:${PORT}`);
     }
 });
