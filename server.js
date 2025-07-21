@@ -25,11 +25,23 @@ app.use((request, response, next) => {
 });
 app.use(cookieParser()); // Middleware
 
-const corsOptions = {
-    origin: process.env.CLIENT_ENDPOINT,
-    credentials: true
-};
-app.use(cors(corsOptions));
+const cors = require('cors');
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://bright-starship-485f48.netlify.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
+
 
 app.use('/auth', authRoutes);
 app.use('/links', linksRoutes);
